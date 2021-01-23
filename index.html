@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./header.css">
+
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="nav">
+            <a class="logo" href="index.html"><h1 class="title">VISUALIZER</h1></a>
+            <div class="nav-links">
+                <a href="" class="link">Vendor</a>
+                <a href="" class="link">Customer</a>
+                <a href="" class="link">Chat now</a>
+            </div>
+        </div>
+    </div>
+    <div class="header">
+        <div class="nav">
+            <div class="nav-links-footer">
+                <i class="fas fa-search"></i>
+                <div class="bar"></div>
+                <a href="" class="link">Products</a>
+                <a href="" class="link">Design Tools</a>
+                <a href="" class="link">Inspiration</a>
+                <a href="" class="link">Resources</a>
+                <a href="" class="link">For the trade</a>
+                <a href="" class="link">Contact us</a>
+                <a href="" class="link">Dealer locator</a>
+            </div>
+        </div>
+    </div>
+    <div class="kitchen">
+        <div class="kitchen-visualizer" >
+            <canvas id="kitchen-image1" width="499" height="362" >
+
+            </canvas>
+        </div>
+        <div class="border"></div>
+        <div class="kitchen-visualizer">
+            <canvas id="kitchen-image2" width="445" height="577">
+
+            </canvas>
+        </div>
+    </div>
+    <div class="category">
+        <div class="category-title"><h1>Wall</h1></div>
+        <div class="category-title"><h1>Floor</h1></div>
+    </div>
+    <div class="kitchen-patterns">
+        <div class="wall-patterns">
+            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/bathroom/wall-tile/thumb/calacatta-cressa-white-subway-tile-2x4.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/bathroom/wall-tile/thumb/calacatta-cressa-white-subway-tile-2x4.jpg">
+            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/bathroom/floor-tile/thumb/essentials-ansello-grey.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/bathroom/floor-tile/thumb/essentials-ansello-grey.jpg">
+            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0360tn.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0360tn.jpg">
+            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0343tn.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0343tn.jpg">
+        </div>
+        <div class="floor-patterns">
+            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0105tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0105tn.jpg">
+            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0085tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0085tn.jpg">
+            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0096tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0096tn.jpg">
+            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0098tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0098tn.jpg">
+        </div>
+    </div>
+</div>
+<script>
+    let canvas1 = new Image();
+    let canvas2 = new Image();
+    let kitchenImage1 = document.getElementById('kitchen-image1');
+    let kitchenImage2 = document.getElementById('kitchen-image2');
+    let c1 = new Image(); // floor and wall pattern to be applied to canvas
+    let c2 = new Image(); // overlay applied over the first image
+    let c3 = new Image();
+    let c4 = new Image();
+    c2.src = './images/kitchen-image1-overlay.png';
+    c3.src = './images/kitchen-image2-overlay.png';
+    c4.src = './images/kitchen-image2-overlay3.png';
+
+    canvas1.src = 'https://cdn.msisurfaces.com/images/room-scene-visualizer/kitchen-visualizer.jpg';
+    canvas2.src = './images/image.png';
+
+    // load images and draw to canvas
+    window.onload = function () {
+        let ctx1 = kitchenImage1.getContext('2d');
+        let ctx2 = kitchenImage2.getContext('2d');
+        ctx1.drawImage(canvas1, 0, 0);
+        ctx2.drawImage(canvas2, 0, 0);
+    };
+
+    function onCounterClick(url) {
+        c1.src = url;
+
+        let ctx1 = kitchenImage1.getContext('2d'); // left image in browser
+        let ctx2 = kitchenImage2.getContext('2d'); // right image in browser
+        let ptrnImage1 = ctx1.createPattern(c1, 'repeat'); // floor tile pattern
+        let ptrnImage2 = ctx2.createPattern(c1, 'repeat');
+        ctx1.fillStyle = ptrnImage1;
+        ctx1.fillRect(0, 0, kitchenImage1.width, kitchenImage1.height);
+        // here I had trouble achieving a true perspective change when filling the canvas
+        // in the second image, so I tried to play around with the setTransform method
+        // of the canvas object to achieve something similar
+        ctx2.rotate((-20) * Math.PI / 180);
+        ctx2.setTransform (1, -0.02, -0.1, 1, 0, 0);
+        ctx2.rotate((-3.1) * Math.PI / 180);
+
+        ctx2.fillStyle = ptrnImage2;
+        ctx2.fillRect(0, -100, kitchenImage2.width, kitchenImage2.height);
+
+        let ptrnOverlay1 = ctx1.createPattern(c2, 'no-repeat');
+        ctx1.fillStyle = ptrnOverlay1;
+        ctx1.fillRect(0, 0, kitchenImage1.width, kitchenImage1.height);
+        ctx2.setTransform(1, 0, 0, 1, 0, 0);
+        let ptrnOverlay2 = ctx2.createPattern(c4, 'no-repeat');
+        ctx2.fillStyle = ptrnOverlay2;
+        ctx2.fillRect(0, 0, 500, kitchenImage2.height);
+    }
+
+    function onFloorClick(url) {
+        c1.src = url;
+        let ctx1 = kitchenImage2.getContext('2d');
+
+        let ptrnImage1 = ctx1.createPattern(c1, 'repeat');
+        ctx1.fillStyle = ptrnImage1;
+        ctx1.rotate((-20.5) * Math.PI / 180);
+        ctx1.setTransform (1, -0.4, 0, 1, 0, 0);
+        ctx1.fillRect(-30, 500, kitchenImage2.width, kitchenImage2.height);
+
+        ctx1.setTransform(1, 0, 0, 1, 0, 0);
+        let ptrnOverlay1 = ctx1.createPattern(c4, 'no-repeat');
+        ctx1.fillStyle = ptrnOverlay1;
+        ctx1.fillRect(0, 0, kitchenImage2.width, kitchenImage2.height);
+    }
+</script>
+</body>
+</html>
