@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Visualizer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./header.css">
-
 </head>
 <body>
 <div class="main">
@@ -36,104 +36,131 @@
             </div>
         </div>
     </div>
-    <div class="kitchen">
-        <div class="kitchen-visualizer" >
-            <canvas id="kitchen-image1" width="499" height="362" >
-
-            </canvas>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6" >
+            <canvas class="canvas-kitchen" id="kitchen-image1" width="693" height="528" />
         </div>
-        <div class="border"></div>
-        <div class="kitchen-visualizer">
-            <canvas id="kitchen-image2" width="445" height="577">
-
-            </canvas>
+        <div class="col-md-6">
+            <canvas class="canvas-kitchen" id="kitchen-image2" width="445" height="577" />
         </div>
     </div>
-    <div class="category">
-        <div class="category-title"><h1>Wall</h1></div>
-        <div class="category-title"><h1>Floor</h1></div>
-    </div>
-    <div class="kitchen-patterns">
-        <div class="wall-patterns">
-            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/bathroom/wall-tile/thumb/calacatta-cressa-white-subway-tile-2x4.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/bathroom/wall-tile/thumb/calacatta-cressa-white-subway-tile-2x4.jpg">
-            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/bathroom/floor-tile/thumb/essentials-ansello-grey.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/bathroom/floor-tile/thumb/essentials-ansello-grey.jpg">
-            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0360tn.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0360tn.jpg">
-            <img onclick="onCounterClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0343tn.jpg')" class="wp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/bs0343tn.jpg">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Wall</h1>
+            <img onclick="onWallClick(this)" class="wp active" src="images/calacatta-cressa-white-subway-tile-2x4.jpg">
+            <img onclick="onWallClick(this)" class="wp" src="images/essentials-ansello-grey.jpg">
+            <img onclick="onWallClick(this)" class="wp" src="images/bs0360tn.jpg">
+            <img onclick="onWallClick(this)" class="wp" src="images/bs0343tn.jpg">
+            <img onclick="onWallClick(this)" class="wp" src="images/brick.png">
         </div>
-        <div class="floor-patterns">
-            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0105tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0105tn.jpg">
-            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0085tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0085tn.jpg">
-            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0096tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0096tn.jpg">
-            <img onclick="onFloorClick('https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0098tn.jpg')" class="fp" src="https://cdn.msisurfaces.com/images/visualizers/kitchen/thumbnails/fl0098tn.jpg">
+        <div class="col-md-6">
+            <h1>Floor</h1>
+            <img onclick="onFloorClick(this)" class="fp active" src="images/floor-black.jpg">
+            <img onclick="onFloorClick(this)" class="fp" src="images/floor-brown.jpg">
+            <img onclick="onFloorClick(this)" class="fp" src="images/floor-blackwhite.jpg">
+            <img onclick="onFloorClick(this)" class="fp" src="images/floor-blackwhite2.jpg">
+            <img onclick="onFloorClick(this)" class="fp" src="images/planks_spruce.png">
         </div>
     </div>
 </div>
+<script src="opencv.js"></script>
 <script>
-    let canvas1 = new Image();
-    let canvas2 = new Image();
-    let kitchenImage1 = document.getElementById('kitchen-image1');
-    let kitchenImage2 = document.getElementById('kitchen-image2');
-    let c1 = new Image(); // floor and wall pattern to be applied to canvas
-    let c2 = new Image(); // overlay applied over the first image
-    let c3 = new Image();
-    let c4 = new Image();
-    c2.src = './images/kitchen-image1-overlay.png';
-    c3.src = './images/kitchen-image2-overlay.png';
-    c4.src = './images/kitchen-image2-overlay3.png';
+    var canvas1 = new Image();
+    var canvas2 = new Image();
 
-    canvas1.src = 'https://cdn.msisurfaces.com/images/room-scene-visualizer/kitchen-visualizer.jpg';
+    var imageWall = new Image(); // floor and wall pattern to be applied to canvas
+    var imageFloor = new Image();
+    var overlay1 = new Image(); // overlay applied over the first image
+    var overlay2 = new Image();
+
+    overlay1.src = './images/base.png';
+    overlay2.src = './images/kitchen-image2-overlay3.png';
+
+    canvas1.src = './images/base.png';
     canvas2.src = './images/image.png';
+    var kitchenImage1 = document.getElementById('kitchen-image1');
+    var kitchenImage2 = document.getElementById('kitchen-image2');
 
     // load images and draw to canvas
+    var ctx1;
+    var ctx2;
     window.onload = function () {
-        let ctx1 = kitchenImage1.getContext('2d');
-        let ctx2 = kitchenImage2.getContext('2d');
+        ctx1 = kitchenImage1.getContext('2d');
+        ctx2 = kitchenImage2.getContext('2d');
         ctx1.drawImage(canvas1, 0, 0);
         ctx2.drawImage(canvas2, 0, 0);
+
+        cv['onRuntimeInitialized'] = function () {
+            imageWall.src = document.getElementsByClassName('wp')[0].src;
+            imageFloor.src = document.getElementsByClassName('fp')[0].src;
+            update();
+        }
     };
 
-    function onCounterClick(url) {
-        c1.src = url;
+    function update() {
+        // clear canvases
+        ctx1.clearRect(0, 0, kitchenImage1.width, kitchenImage1.height);
+        ctx2.clearRect(0, 0, kitchenImage2.width, kitchenImage2.height);
 
-        let ctx1 = kitchenImage1.getContext('2d'); // left image in browser
-        let ctx2 = kitchenImage2.getContext('2d'); // right image in browser
-        let ptrnImage1 = ctx1.createPattern(c1, 'repeat'); // floor tile pattern
-        let ptrnImage2 = ctx2.createPattern(c1, 'repeat');
-        ctx1.fillStyle = ptrnImage1;
+        // apply wall pattern to left image
+        ctx1.fillStyle = ctx1.createPattern(imageWall, 'repeat');
         ctx1.fillRect(0, 0, kitchenImage1.width, kitchenImage1.height);
-        // here I had trouble achieving a true perspective change when filling the canvas
-        // in the second image, so I tried to play around with the setTransform method
-        // of the canvas object to achieve something similar
-        ctx2.rotate((-20) * Math.PI / 180);
-        ctx2.setTransform (1, -0.04, -0.1, 1, 0, 0);
-        ctx2.rotate((-3.1) * Math.PI / 180);
 
-        ctx2.fillStyle = ptrnImage2;
-        ctx2.fillRect(0, -100, kitchenImage2.width, kitchenImage2.height);
-
-        let ptrnOverlay1 = ctx1.createPattern(c2, 'no-repeat');
-        ctx1.fillStyle = ptrnOverlay1;
+        // apply overlay to left image
+        ctx1.fillStyle = ctx1.createPattern(overlay1, 'no-repeat');
         ctx1.fillRect(0, 0, kitchenImage1.width, kitchenImage1.height);
-        ctx2.setTransform(1, 0, 0, 1, 0, 0);
-        let ptrnOverlay2 = ctx2.createPattern(c4, 'no-repeat');
-        ctx2.fillStyle = ptrnOverlay2;
-        ctx2.fillRect(0, 0, 500, kitchenImage2.height);
+
+        // temp canvas to store wall pattern for second image
+        var wallCanvas = document.createElement('canvas');
+        var ctxTempWall = wallCanvas.getContext('2d');
+        ctxTempWall.fillStyle = ctxTempWall.createPattern(imageWall, 'repeat');
+        ctxTempWall.fillRect(0, 0, kitchenImage2.width, kitchenImage2.height);
+
+        // temp canvas to store floor pattern for second image
+        var floorCanvas = document.createElement('canvas');
+        var ctxTempFloor = floorCanvas.getContext('2d');
+        ctxTempFloor.fillStyle = ctxTempFloor.createPattern(imageFloor, 'repeat');
+        ctxTempFloor.fillRect(0, 0, kitchenImage2.width, kitchenImage2.height);
+
+        // change perspective of the wall
+        var srcWall = cv.imread(wallCanvas);
+        var dstWall = new cv.Mat();
+        var matrixWall = cv.getPerspectiveTransform(cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, 300, 0, 0, 150, 300, 150]), cv.matFromArray(4, 1, cv.CV_32FC2, [79, 213, 349, 242, 77, 366, 351, 339]));
+        cv.warpPerspective(srcWall, dstWall, matrixWall, new cv.Size(kitchenImage2.width, kitchenImage2.height), cv.INTER_LINEAR, cv.BORDER_TRANSPARENT, new cv.Scalar());
+        cv.imshow('kitchen-image2', dstWall);
+        srcWall.delete(); dstWall.delete(); matrixWall.delete();
+
+        // change perspective of the floor
+        var srcFloor = cv.imread(floorCanvas);
+        var dstFloor = new cv.Mat();
+        var matrixFloor = cv.getPerspectiveTransform(cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, 300, 0, 0, 150, 300, 150]), cv.matFromArray(4, 1, cv.CV_32FC2, [43, 572, 398, 460, 135, 735, 521, 521]));
+        cv.warpPerspective(srcFloor, dstFloor, matrixFloor, new cv.Size(kitchenImage2.width, kitchenImage2.height), cv.INTER_LINEAR, cv.BORDER_TRANSPARENT, new cv.Scalar());
+        cv.imshow('kitchen-image2', dstFloor);
+        srcFloor.delete(); dstFloor.delete(); matrixFloor.delete();
+
+        // apply overlay to second image
+        ctx2.fillStyle = ctx2.createPattern(overlay2, 'no-repeat');
+        ctx2.fillRect(0, 0, kitchenImage2.width, kitchenImage2.height);
     }
 
-    function onFloorClick(url) {
-        c1.src = url;
-        let ctx1 = kitchenImage2.getContext('2d');
+    function onWallClick(element) {
+        imageWall.src = element.src;
+        Array.prototype.forEach.call(document.getElementsByClassName('wp'), function (el) {
+            el.classList.remove('active');
+        });
+        element.classList.add('active');
+        update();
+    }
 
-        let ptrnImage1 = ctx1.createPattern(c1, 'repeat');
-        ctx1.fillStyle = ptrnImage1;
-        ctx1.rotate((-20.5) * Math.PI / 180);
-        ctx1.setTransform (1, -0.4, 0, 1, 0, 0);
-        ctx1.fillRect(-30, 500, kitchenImage2.width, kitchenImage2.height);
-
-        ctx1.setTransform(1, 0, 0, 1, 0, 0);
-        let ptrnOverlay1 = ctx1.createPattern(c4, 'no-repeat');
-        ctx1.fillStyle = ptrnOverlay1;
-        ctx1.fillRect(0, 0, kitchenImage2.width, kitchenImage2.height);
+    function onFloorClick(element) {
+        imageFloor.src = element.src;
+        Array.prototype.forEach.call(document.getElementsByClassName('fp'), function (el) {
+            el.classList.remove('active');
+        });
+        element.classList.add('active');
+        update();
     }
 </script>
 </body>

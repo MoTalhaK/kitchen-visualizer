@@ -23,8 +23,8 @@ img {
     display: flex;
     justify-content: center;
     width: 100%;
-    height: 100vh;
     flex-flow: row wrap;
+    margin-bottom: 20px;
 }
 
 .kitchen {
@@ -56,4 +56,13 @@ img {
 
 .wp, .fp {
     padding: 10px;
+    opacity: 0.5;
+}
+
+.wp.active, .fp.active {
+    opacity: 1.0;
+}
+
+.canvas-kitchen {
+    width: 100%;
 }

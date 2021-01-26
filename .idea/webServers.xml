@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="d0158f1f-9b0c-4386-bdb0-8d266c6c5302" name="XAMPP" url="http://localhost/msi-visualizer">
+        <fileTransfer port="0" mountedRoot="D:\xaamp\htdocs\msi-visualizer" accessType="MOUNT" />
+      </webServer>
+    </option>
+  </component>
+</project>
